@@ -1,0 +1,9 @@
+build/
+node_modules/
+
+# tmp & editor files
+.DS_Store
+.sass-cache
+nbproject
+_ide_helper.php
+.idea
