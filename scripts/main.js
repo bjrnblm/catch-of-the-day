@@ -1,12 +1,19 @@
+/* React */
 var React = require('react');
 var ReactDOM = require('react-dom');
 
+/* Routing */
 var ReactRouter = require('react-router');
 var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
 var History = ReactRouter.History;
 var createBrowserHistory = require('history/lib/createBrowserHistory');
 
+/* Firebase */
+var Rebase = require('re-base');
+var base = Rebase.createClass('https://bjorn-catch-of-the.firebaseio.com/')
+
+/* Helpers */
 var helpers = require('./helpers');
 
 var App = React.createClass({
@@ -16,6 +23,28 @@ var App = React.createClass({
             fishes: {},
             order: {},
         }
+    },
+
+    componentDidMount: function() {
+        base.syncState(this.props.params.storeId + '/fishes', {
+            context: this,
+            state: 'fishes'
+        });
+
+        var localStorageRef = localStorage.getItem('order-' + this.props.params.storeId);
+
+        if(localStorageRef){
+            this.setState({
+                order: JSON.parse(localStorageRef)
+            });
+        }
+    },
+
+    componentWillUpdate: function(nextProps, nextState) {
+        localStorage.setItem(
+            'order-' + this.props.params.storeId,
+            JSON.stringify(nextState.order)
+        );
     },
 
     addToOrder: function(key) {
