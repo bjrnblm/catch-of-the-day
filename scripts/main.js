@@ -57,12 +57,24 @@ var App = React.createClass({
         this.setState({ order: this.state.order });
     },
 
+    removeFromOrder: function(key) {
+        delete this.state.order[key];
+        this.setState({ order: this.state.order });
+    },
+
     addFish: function(fish) {
         var timestamp = (new Date()).getTime();
 
         //Update the state
         this.state.fishes['fish-' + timestamp] = fish;
         this.setState({ fishes: this.state.fishes });
+    },
+
+    removeFish: function(key) {
+        if(confirm("Are you sure you want to remove this fish")){
+            this.state.fishes[key] = null;
+            this.setState({ fishes: this.state.fishes });
+        }
     },
 
     loadSamples: function() {
@@ -86,9 +98,14 @@ var App = React.createClass({
                         {Object.keys(this.state.fishes).map(this.renderFish)}
                     </ul>
                 </div>
-                <Order fishes={this.state.fishes} order={this.state.order} />
-                <Inventory fishes={this.state.fishes} addFish={this.addFish}
-                loadSamples={this.loadSamples} linkState={this.linkState} />
+                <Order fishes={this.state.fishes} order={this.state.order} removeFromOrder={this.removeFromOrder} />
+                <Inventory
+                    fishes={this.state.fishes}
+                    addFish={this.addFish}
+                    removeFish={this.removeFish}
+                    loadSamples={this.loadSamples}
+                    linkState={this.linkState}
+                />
             </div>
         )
     }
@@ -182,11 +199,13 @@ var Order = React.createClass({
     renderOrder: function(key) {
         var fish = this.props.fishes[key];
         var count = this.props.order[key];
+        var removeButton = <button onClick={this.props.removeFromOrder.bind(null, key)}>&times;</button>
 
         if(!fish){
             return (
                 <li key={key}>
                     Sorry, Fish no longer available!
+                    {removeButton}
                 </li>
             )
         }
@@ -196,6 +215,7 @@ var Order = React.createClass({
                 {count}lbs
                 {fish.name}
                 <span className="price">{helpers.formatPrice(count * fish.price)}</span>
+                {removeButton}
             </li>
         )
     },
@@ -244,6 +264,7 @@ var Inventory = React.createClass({
                 </select>
                 <textarea valueLink={linkState('fishes.'+ key +'.description')}></textarea>
                 <input type="text" valueLink={linkState('fishes.'+ key +'.image')} />
+                <button onClick={this.props.removeFish.bind(null,key)}>Remove fish</button>
             </div>
         )
     },
