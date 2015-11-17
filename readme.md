@@ -3,8 +3,12 @@
 
 #### Run npm
 
-```npm install```
+```
+npm install
+```
 
 #### Run gulp
 
-```gulp```
+```
+gulp
+```
