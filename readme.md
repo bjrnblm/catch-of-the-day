@@ -1,2 +1,5 @@
-`npm install`
-`gulp`
+# Catch of the day
+## A small React app
+
+```npm install```
+```gulp```
